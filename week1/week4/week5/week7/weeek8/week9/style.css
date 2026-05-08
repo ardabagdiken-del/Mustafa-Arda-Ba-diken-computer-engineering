@@ -1,0 +1,175 @@
+/* 
+  Exercise 2: CSS Styling
+  ========================
+  Complete the tasks described in README.md.
+  Do NOT modify index.html — all your work goes here.
+*/
+
+/* =============================================
+   TODO Task 2: Define CSS Custom Properties
+   ============================================= */
+:root {
+  --primary-color: #2a5298;
+  --secondary-color: #1e3c72;
+  --accent-color: #ffcc00;
+  --text-color: #333333;
+  --light-bg: #f4f7f6;
+  --white: #ffffff;
+  --border-radius: 8px;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+/* =============================================
+   TODO Task 3: Base / Reset Styles
+   ============================================= */
+* {
+  /* Box-sizing reset ensures padding doesn't affect width */
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--light-bg);
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.6;
+}
+
+
+/* =============================================
+   TODO Task 3: Typography — Headings
+   ============================================= */
+h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  color: var(--white);
+}
+
+h2 {
+  font-size: 2rem;
+  color: var(--secondary-color);
+  border-bottom: 3px solid var(--primary-color);
+  display: inline-block;
+  margin-top: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-top: 0;
+}
+
+/* TODO Task 3: Pseudo-element — first letter of a paragraph */
+/* Targets the first paragraph in the about section */
+#about p:first-of-type::first-letter {
+  font-size: 3.5rem;
+  font-weight: bold;
+  float: left;
+  line-height: 1;
+  padding-right: 8px;
+  color: var(--secondary-color);
+}
+
+
+/* =============================================
+   TODO Task 3: Navigation Links
+   ============================================= */
+nav {
+  background-color: var(--secondary-color);
+  padding: 1rem;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  color: var(--white);
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+nav a:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+nav a:focus {
+  outline: 2px dashed var(--accent-color);
+  outline-offset: 4px;
+}
+
+
+/* =============================================
+   TODO Task 4: Header / Hero
+   ============================================= */
+#hero {
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+  padding: 5rem 1rem;
+  text-align: center;
+  color: var(--white);
+}
+
+
+/* =============================================
+   TODO Task 4: Cards & Box Model
+   ============================================= */
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 2rem 0;
+  justify-content: center;
+}
+
+.card {
+  background-color: var(--white);
+  width: 300px;
+  /* Showing off the Box Model */
+  padding: 20px;            /* Inside space */
+  border: 1px solid #ddd;   /* Visible edge */
+  margin: 10px;             /* Outside space */
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+
+/* =============================================
+   TODO Task 5: Alternating List Items
+   ============================================= */
+.fancy-list {
+  list-style: none;
+  padding: 0;
+  max-width: 500px;
+  margin: 2rem 0;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.fancy-list li {
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.fancy-list li:nth-child(odd) {
+  background-color: var(--white);
+}
+
+.fancy-list li:nth-child(even) {
+  background-color: #e9ecef;
+}
+
+
+/* =============================================
+   TODO Task 6: Footer
+   ============================================= */
+footer {
+  background-color: var(--secondary-color);
+  color: var(--white);
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-top: 4rem;
+}
