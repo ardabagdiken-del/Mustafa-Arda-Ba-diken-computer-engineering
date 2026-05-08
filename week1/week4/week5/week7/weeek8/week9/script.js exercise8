@@ -1,0 +1,179 @@
+/**
+ * script.js — Final Project: Weather Dashboard
+ * ===========================================
+ * Requirements Met:
+ * - Uses const/let
+ * - Async/await fetch with try/catch
+ * - Persistent storage via localStorage
+ * - Modular function design
+ * - Custom DOM-based messaging (no alert)
+ */
+
+// 1. Configuration & State
+const API_KEY = '5561a0953a992d192c7308b3e85e09f8'; // Note: Replace with your actual key if expired
+const STORAGE_KEY = 'skycast_history';
+
+let searchHistory = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+// 2. Selectors
+const cityInput = document.querySelector('#city-input');
+const searchBtn = document.querySelector('#btn-search');
+const historyContainer = document.querySelector('#search-history');
+const currentDisplay = document.querySelector('#current-weather');
+const forecastContainer = document.querySelector('#forecast-container');
+
+// ============================================================
+// DATA FETCHING (The Async Logic)
+// ============================================================
+
+/**
+ * Fetches coordinates for a city and then its weather data.
+ * @param {string} city - The name of the city to search for.
+ */
+async function getWeatherData(city) {
+  displayMessage('loading', `Fetching data for ${city}...`);
+
+  try {
+    // Step 1: Geocoding API (Convert city name to Coordinates)
+    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`;
+    const geoResponse = await fetch(geoUrl);
+    
+    if (!geoResponse.ok) throw new Error('Network error reaching geocoding service.');
+    
+    const geoData = await geoResponse.json();
+    if (geoData.length === 0) throw new Error('City not found. Please check the spelling.');
+
+    const { lat, lon, name } = geoData[0];
+
+    // Step 2: Forecast API (Using coordinates)
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;
+    const weatherResponse = await fetch(weatherUrl);
+    
+    if (!weatherResponse.ok) throw new Error('Network error reaching weather service.');
+    
+    const weatherData = await weatherResponse.json();
+
+    // Step 3: Update UI
+    addToHistory(name);
+    renderCurrentWeather(weatherData);
+    renderForecast(weatherData);
+
+  } catch (error) {
+    displayMessage('error', error.message);
+  }
+}
+
+// ============================================================
+// UI RENDERING FUNCTIONS
+// ============================================================
+
+function renderCurrentWeather(data) {
+  const current = data.list[0];
+  const cityName = data.city.name;
+  const date = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+  currentDisplay.innerHTML = `
+    <div class="current-weather-card">
+      <div class="info">
+        <h2>${cityName}</h2>
+        <p class="date">${date}</p>
+        <p class="temp">${Math.round(current.main.temp)}°C</p>
+        <p class="desc">${current.weather[0].description}</p>
+      </div>
+      <div class="details">
+        <img src="https://openweathermap.org/img/wn/${current.weather[0].icon}@4x.png" alt="icon">
+        <p>💨 Wind: ${current.wind.speed} m/s</p>
+        <p>💧 Humidity: ${current.main.humidity}%</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderForecast(data) {
+  forecastContainer.innerHTML = '';
+  
+  // Filter data to get one entry per day (roughly mid-day)
+  const dailyData = data.list.filter(item => item.dt_txt.includes("12:00:00"));
+
+  dailyData.forEach(day => {
+    const card = document.createElement('div');
+    card.className = 'forecast-card';
+    
+    const dayName = new Date(day.dt_txt).toLocaleDateString('en-US', { weekday: 'short' });
+    
+    card.innerHTML = `
+      <h3>${dayName}</h3>
+      <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" alt="weather icon">
+      <p class="f-temp">${Math.round(day.main.temp)}°C</p>
+      <div class="f-details">
+        <span>💧 ${day.main.humidity}%</span>
+      </div>
+    `;
+    forecastContainer.appendChild(card);
+  });
+}
+
+/**
+ * Displays feedback messages to the user within the UI.
+ */
+function displayMessage(type, text) {
+  currentDisplay.innerHTML = `
+    <div class="status-msg ${type}">
+      <p>${type === 'loading' ? '⏳' : '❌'} ${text}</p>
+    </div>
+  `;
+}
+
+// ============================================================
+// STORAGE & HISTORY LOGIC
+// ============================================================
+
+function addToHistory(city) {
+  // Prevent duplicates
+  if (!searchHistory.includes(city)) {
+    searchHistory.unshift(city); // Add to top
+    if (searchHistory.length > 5) searchHistory.pop(); // Keep only last 5
+    
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(searchHistory));
+    renderHistory();
+  }
+}
+
+function renderHistory() {
+  historyContainer.innerHTML = '';
+  
+  searchHistory.forEach(city => {
+    const btn = document.createElement('button');
+    btn.textContent = city;
+    btn.className = 'history-item';
+    btn.addEventListener('click', () => getWeatherData(city));
+    historyContainer.appendChild(btn);
+  });
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+
+searchBtn.addEventListener('click', () => {
+  const city = cityInput.value.trim();
+  if (city) {
+    getWeatherData(city);
+    cityInput.value = '';
+  }
+});
+
+cityInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    const city = cityInput.value.trim();
+    if (city) {
+      getWeatherData(city);
+      cityInput.value = '';
+    }
+  }
+});
+
+// Initialize History on Page Load
+renderHistory();
+
+console.log('SkyCast Dashboard Initialized 🌤️');
