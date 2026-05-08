@@ -1,0 +1,135 @@
+/* 
+  Exercise 4: JavaScript & the DOM
+  ================================
+  This script handles all the interactive tasks defined in index.html.
+*/
+
+// =============================================
+// TASK 1: Console Warmup
+// =============================================
+console.log("✅ script.js is successfully linked!");
+
+const targetBox = document.getElementById('target-box');
+// Change background color and text
+targetBox.style.backgroundColor = "#e8a838";
+targetBox.style.color = "white";
+targetBox.textContent = "I've been modified by JavaScript!";
+
+
+// =============================================
+// TASK 2: Click Counter
+// =============================================
+let count = 0;
+const countDisplay = document.getElementById('count-display');
+const btnIncrement = document.getElementById('btn-increment');
+const btnDecrement = document.getElementById('btn-decrement');
+const btnReset = document.getElementById('btn-reset');
+
+function updateDisplay() {
+    countDisplay.textContent = count;
+    // Optional: Add color feedback
+    countDisplay.style.color = count > 0 ? "green" : count < 0 ? "red" : "black";
+}
+
+btnIncrement.addEventListener('click', () => {
+    count++;
+    updateDisplay();
+});
+
+btnDecrement.addEventListener('click', () => {
+    count--;
+    updateDisplay();
+});
+
+btnReset.addEventListener('click', () => {
+    count = 0;
+    updateDisplay();
+});
+
+
+// =============================================
+// TASK 3: Dynamic List Builder
+// =============================================
+const listInput = document.getElementById('list-input');
+const btnAddItem = document.getElementById('btn-add-item');
+const dynamicList = document.getElementById('dynamic-list');
+
+btnAddItem.addEventListener('click', () => {
+    const text = listInput.value.trim();
+    
+    if (text !== "") {
+        // Create <li> element
+        const li = document.createElement('li');
+        li.textContent = text;
+
+        // Create delete button for the new item
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = "×";
+        deleteBtn.className = "delete-btn";
+        
+        // Add delete functionality
+        deleteBtn.addEventListener('click', () => {
+            li.remove();
+        });
+
+        li.appendChild(deleteBtn);
+        dynamicList.appendChild(li);
+
+        // Clear input
+        listInput.value = "";
+        listInput.focus();
+    }
+});
+
+
+// =============================================
+// TASK 4: Show / Hide Toggle
+// =============================================
+const btnToggle = document.getElementById('btn-toggle');
+const detailsDiv = document.querySelector('.details');
+
+btnToggle.addEventListener('click', () => {
+    const isHidden = detailsDiv.classList.toggle('hidden');
+    btnToggle.textContent = isHidden ? "Show Details" : "Hide Details";
+});
+
+
+// =============================================
+// TASK 5: RGB Color Mixer
+// =============================================
+const sliderR = document.getElementById('slider-r');
+const sliderG = document.getElementById('slider-g');
+const sliderB = document.getElementById('slider-b');
+
+const valR = document.getElementById('val-r');
+const valG = document.getElementById('val-g');
+const valB = document.getElementById('val-b');
+
+const colorPreview = document.getElementById('color-preview');
+const hexDisplay = document.getElementById('hex-display');
+
+function updateColor() {
+    const r = sliderR.value;
+    const g = sliderG.value;
+    const b = sliderB.value;
+
+    // Update the numbers next to labels
+    valR.textContent = r;
+    valG.textContent = g;
+    valB.textContent = b;
+
+    // Update the preview box background
+    const rgbColor = `rgb(${r}, ${g}, ${b})`;
+    colorPreview.style.backgroundColor = rgbColor;
+
+    // Update the text display
+    hexDisplay.textContent = rgbColor.toUpperCase();
+}
+
+// Add event listeners for all three sliders
+[sliderR, sliderG, sliderB].forEach(slider => {
+    slider.addEventListener('input', updateColor);
+});
+
+// Initialize color on load
+updateColor();
