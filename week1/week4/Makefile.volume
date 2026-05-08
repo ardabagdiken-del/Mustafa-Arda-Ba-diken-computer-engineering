@@ -1,0 +1,65 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// Number of bytes in a .wav file header
+const int HEADER_SIZE = 44;
+
+int main(int argc, char *argv[])
+{
+    // Check command-line arguments
+    if (argc != 4)
+    {
+        printf("Usage: ./volume input.wav output.wav factor\n");
+        return 1;
+    }
+
+    // Open files and determine scaling factor
+    FILE *input = fopen(argv[1], "r");
+    if (input == NULL)
+    {
+        printf("Could not open file.\n");
+        return 1;
+    }
+
+    FILE *output = fopen(argv[2], "w");
+    if (output == NULL)
+    {
+        printf("Could not open file.\n");
+        return 1;
+    }
+
+    float factor = atof(argv[3]);
+
+    // ---------------------------------------------------------------------------
+    // TODO 1: Copy header from input file to output file
+    // ---------------------------------------------------------------------------
+    // The header is 44 bytes long and should not be modified.
+    uint8_t header[HEADER_SIZE];
+    
+    // Read 44 bytes from input into the header array
+    fread(header, sizeof(uint8_t), HEADER_SIZE, input);
+    
+    // Write those 44 bytes directly to the output file
+    fwrite(header, sizeof(uint8_t), HEADER_SIZE, output);
+
+    // ---------------------------------------------------------------------------
+    // TODO 2: Read samples from input file and write updated data to output file
+    // ---------------------------------------------------------------------------
+    // Audio samples in a WAV file are 16-bit signed integers (int16_t).
+    int16_t buffer;
+
+    // Read single samples one at a time until the end of the file
+    while (fread(&buffer, sizeof(int16_t), 1, input))
+    {
+        // Multiply the sample by the volume factor
+        buffer *= factor;
+        
+        // Write the new sample to the output file
+        fwrite(&buffer, sizeof(int16_t), 1, output);
+    }
+
+    // Close files
+    fclose(input);
+    fclose(output);
+}
