@@ -1,0 +1,62 @@
+# Project 5 — Mini Shopping Cart
+# Author: Gemini
+
+menu = {
+    1: ("Apple",  0.50),
+    2: ("Banana", 0.30),
+    3: ("Milk",   1.20),
+    4: ("Bread",  2.00),
+}
+
+cart  = {}   # { item_name: quantity }
+total = 0.0
+
+# TODO: display the menu
+print("--- Shop Menu ---")
+for number, (name, price) in menu.items():
+    print(f"{number}. {name:<10} ${price:.2f}")
+print("5. Done")
+
+# TODO: shopping loop
+while True:
+    try:
+        choice = int(input("\nChoose an item (1-5): "))
+        
+        if choice == 5:
+            break
+        
+        if choice in menu:
+            item_name, item_price = menu[choice]
+            
+            # Update the total cost
+            total += item_price
+            
+            # Add to cart and update quantity
+            if item_name in cart:
+                cart[item_name] += 1
+            else:
+                cart[item_name] = 1
+                
+            print(f"Added {item_name} to your cart.")
+        else:
+            print("Invalid choice, try again.")
+            
+    except ValueError:
+        print("Please enter a valid number.")
+
+# TODO: print the receipt
+print("\n--- Receipt ---")
+if not cart:
+    print("Your cart is empty.")
+else:
+    for item, qty in cart.items():
+        # Finding the price again for the receipt display
+        # We search the menu values to find the price for the specific item name
+        for num, (name, price) in menu.items():
+            if name == item:
+                item_total = price * qty
+                print(f"{item:<10} x{qty:<3} ${item_total:>5.2f}")
+
+print("-" * 20)
+print(f"Total: ${total:.2f}")
+print("Thank you for shopping with us!")
