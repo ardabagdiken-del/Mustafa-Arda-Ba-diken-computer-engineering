@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forms & Validation</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Registration Form</h1>
+    <p>Complete all required fields to create your account.</p>
+  </header>
+
+  <main>
+    <!-- Success message (hidden until form is submitted successfully) -->
+    <div id="success-message" class="hidden">
+      <h2>🎉 Registration Successful!</h2>
+      <p>Welcome aboard! Your account has been created.</p>
+    </div>
+
+    <form id="registration-form" novalidate>
+      
+      <!-- 1. Text Input: Full Name -->
+      <div class="form-group">
+        <label for="username">Username *</label>
+        <input type="text" id="username" name="username" placeholder="janesmith123" required />
+        <span class="error-msg" id="error-username"></span>
+      </div>
+
+      <!-- 2. Email Input -->
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" placeholder="jane@example.com" required />
+        <span class="error-msg" id="error-email"></span>
+      </div>
+
+      <!-- 3. Password Input -->
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <input type="password" id="password" name="password" placeholder="Min. 8 characters" required />
+        <span class="error-msg" id="error-password"></span>
+      </div>
+
+      <!-- 4. Date Input -->
+      <div class="form-group">
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob" name="dob" />
+        <span class="error-msg" id="error-dob"></span>
+      </div>
+
+      <!-- 5. Select Dropdown -->
+      <div class="form-group">
+        <label for="country">Country</label>
+        <select id="country" name="country">
+          <option value="">Select a country...</option>
+          <option value="us">United States</option>
+          <option value="uk">United Kingdom</option>
+          <option value="tr">Turkey</option>
+          <option value="de">Germany</option>
+        </select>
+        <span class="error-msg" id="error-country"></span>
+      </div>
+
+      <!-- 6. Radio Buttons -->
+      <div class="form-group">
+        <label>Account Type *</label>
+        <div class="radio-group">
+          <input type="radio" id="personal" name="acc-type" value="personal">
+          <label for="personal" class="label-inline">Personal</label>
+          <input type="radio" id="business" name="acc-type" value="business">
+          <label for="business" class="label-inline">Business</label>
+        </div>
+        <span class="error-msg" id="error-acc-type"></span>
+      </div>
+
+      <!-- 7. Range Slider -->
+      <div class="form-group">
+        <label for="experience">Experience Level (0-10)</label>
+        <input type="range" id="experience" name="experience" min="0" max="10" value="5">
+        <span class="error-msg" id="error-experience"></span>
+      </div>
+
+      <!-- 8. Textarea -->
+      <div class="form-group">
+        <label for="bio">Short Bio</label>
+        <textarea id="bio" name="bio" rows="3" placeholder="Tell us a bit about yourself..."></textarea>
+        <span class="error-msg" id="error-bio"></span>
+      </div>
+
+      <!-- 9. Checkbox -->
+      <div class="form-group checkbox-group">
+        <input type="checkbox" id="terms" name="terms" required />
+        <label for="terms" class="label-inline">I agree to the Terms & Conditions *</label>
+        <span class="error-msg" id="error-terms"></span>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-group">
+        <button type="submit" id="submit-btn">Create Account</button>
+      </div>
+
+    </form>
+  </main>
+
+  <footer>
+    <p>Week 9 · Exercise 5 · Forms & Validation</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
