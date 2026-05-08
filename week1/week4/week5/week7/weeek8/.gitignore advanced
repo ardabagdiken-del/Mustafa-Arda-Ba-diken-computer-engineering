@@ -1,0 +1,23 @@
+# SQLite databases (generated from .sql files)
+# These are the actual database files. We usually ignore them because 
+# they change constantly and can be very large.
+*.db
+*.db-shm
+*.db-wal
+
+# OS generated files
+# These are hidden files created by Windows or macOS that aren't part of your project.
+.DS_Store
+Thumbs.db
+
+# Editor and IDE files
+# These folders contain your personal settings for VS Code or PyCharm.
+.vscode/
+.idea/
+*.swp
+*~
+
+# Python specific files
+# These are compiled Python files and cache folders that speed up execution.
+__pycache__/
+*.pyc
