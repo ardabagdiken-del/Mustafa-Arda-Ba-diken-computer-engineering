@@ -1,0 +1,131 @@
+// Implements a dictionary's functionality
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+
+#include "dictionary.h"
+
+// Represents a node in a hash table
+typedef struct node
+{
+    char word[LENGTH + 1];
+    struct node *next;
+}
+node;
+
+// Choose number of buckets in hash table (N)
+// N = 26^2 is a good balance for efficiency
+const unsigned int N = 676;
+
+// Hash table
+node *table[N];
+
+// Track number of words added
+unsigned int word_count = 0;
+
+// Returns true if word is in dictionary, else false
+bool check(const char *word)
+{
+    // Hash word to obtain a hash value
+    unsigned int index = hash(word);
+
+    // Access linked list at that index in the hash table
+    node *cursor = table[index];
+
+    // Traverse linked list, looking for the word (case-insensitive)
+    while (cursor != NULL)
+    {
+        if (strcasecmp(cursor->word, word) == 0)
+        {
+            return true;
+        }
+        cursor = cursor->next;
+    }
+    return false;
+}
+
+// Hashes word to a number
+unsigned int hash(const char *word)
+{
+    // Simple hash: Use first two letters
+    unsigned int h = (toupper(word[0]) - 'A') * 26;
+    if (word[1] != '\0' && isalpha(word[1]))
+    {
+        h += (toupper(word[1]) - 'A');
+    }
+    return h % N;
+}
+
+// Loads dictionary into memory, returning true if successful, else false
+bool load(const char *dictionary)
+{
+    // Open dictionary file
+    FILE *file = fopen(dictionary, "r");
+    if (file == NULL)
+    {
+        return false;
+    }
+
+    // Buffer for a word
+    char word[LENGTH + 1];
+
+    // Read strings from file one at a time
+    while (fscanf(file, "%s", word) != EOF)
+    {
+        // Create a new node for each word
+        node *new_node = malloc(sizeof(node));
+        if (new_node == NULL)
+        {
+            return false;
+        }
+
+        // Copy word into node
+        strcpy(new_node->word, word);
+
+        // Hash word to obtain a hash value
+        unsigned int index = hash(word);
+
+        // Insert node into hash table
+        new_node->next = table[index];
+        table[index] = new_node;
+
+        word_count++;
+    }
+
+    // Close file
+    fclose(file);
+    return true;
+}
+
+// Returns number of words in dictionary if loaded, else 0 if not yet loaded
+unsigned int size(void)
+{
+    return word_count;
+}
+
+// Unloads dictionary from memory, returning true if successful, else false
+bool unload(void)
+{
+    // Iterate over buckets
+    for (int i = 0; i < N; i++)
+    {
+        node *cursor = table[i];
+
+        // Free linked list in each bucket
+        while (cursor != NULL)
+        {
+            node *tmp = cursor;
+            cursor = cursor->next;
+            free(tmp);
+        }
+
+        if (i == N - 1 && cursor == NULL)
+        {
+            return true;
+        }
+    }
+    return false;
+}
