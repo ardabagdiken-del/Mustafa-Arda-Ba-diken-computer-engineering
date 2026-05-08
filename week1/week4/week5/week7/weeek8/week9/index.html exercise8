@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkyCast — Weather Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <h1>🌍 SkyCast</h1>
+      <div class="search-box">
+        <input type="text" id="city-input" placeholder="Enter city name..." />
+        <button id="btn-search">Search</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Sidebar: Search History -->
+    <aside class="sidebar">
+      <h3>Recent Searches</h3>
+      <div id="search-history">
+        <!-- History buttons rendered by JS -->
+      </div>
+      <button id="btn-clear" class="secondary">Clear History</button>
+    </aside>
+
+    <!-- Main Content: Weather Displays -->
+    <section class="weather-content">
+      
+      <!-- Current Weather -->
+      <div id="current-weather" class="card">
+        <div class="placeholder-text">Search for a city to see the current weather.</div>
+      </div>
+
+      <!-- 5-Day Forecast -->
+      <div class="forecast-section">
+        <h2>5-Day Forecast</h2>
+        <div id="forecast-container" class="forecast-grid">
+          <!-- Forecast cards rendered by JS -->
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>Week 9 · Final Project · Weather Dashboard API</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
