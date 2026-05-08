@@ -1,0 +1,157 @@
+/**
+ * Exercise 5: Forms & Validation
+ * ================================
+ * Add real-time validation and submit handling.
+ */
+
+const form = document.querySelector('#registration-form');
+const successMsg = document.querySelector('#success-message');
+
+// ============================================================
+// HELPER: Show or clear an error on a field
+// ============================================================
+function showError(inputId, message) {
+  const input = document.querySelector(`#${inputId}`);
+  const errorSpan = document.querySelector(`#error-${inputId}`);
+  
+  input.classList.add('invalid');
+  input.classList.remove('valid');
+  if (errorSpan) errorSpan.textContent = message;
+}
+
+function clearError(inputId) {
+  const input = document.querySelector(`#${inputId}`);
+  const errorSpan = document.querySelector(`#error-${inputId}`);
+  
+  input.classList.remove('invalid');
+  input.classList.add('valid');
+  if (errorSpan) errorSpan.textContent = "";
+}
+
+// ============================================================
+// TASK 2: Individual Field Validators
+// ============================================================
+
+function validateUsername() {
+  const input = document.querySelector('#username');
+  if (input.value.trim().length < 3) {
+    showError('username', 'Username must be at least 3 characters.');
+    return false;
+  }
+  clearError('username');
+  return true;
+}
+
+function validateEmail() {
+  const input = document.querySelector('#email');
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!regex.test(input.value)) {
+    showError('email', 'Please enter a valid email address.');
+    return false;
+  }
+  clearError('email');
+  return true;
+}
+
+function validatePassword() {
+  const input = document.querySelector('#password');
+  const pass = input.value;
+  const hasDigit = /\d/.test(pass);
+
+  updatePasswordStrength(pass);
+
+  if (pass.length < 8 || !hasDigit) {
+    showError('password', 'Password must be 8+ chars with at least one digit.');
+    return false;
+  }
+  clearError('password');
+  return true;
+}
+
+function validateTerms() {
+  const checkbox = document.querySelector('#terms');
+  if (!checkbox.checked) {
+    showError('terms', 'You must agree to the terms.');
+    return false;
+  }
+  clearError('terms');
+  return true;
+}
+
+// ============================================================
+// TASK 4: Password Strength Indicator
+// ============================================================
+function updatePasswordStrength(password) {
+  const strengthMeter = document.querySelector('#password-strength');
+  if (!strengthMeter) return;
+
+  let strength = 'Weak';
+  strengthMeter.className = 'strength-weak';
+
+  if (password.length > 10 && /[A-Z]/.test(password) && /\W/.test(password)) {
+    strength = 'Strong';
+    strengthMeter.className = 'strength-strong';
+  } else if (password.length >= 8) {
+    strength = 'Fair';
+    strengthMeter.className = 'strength-fair';
+  }
+
+  strengthMeter.textContent = `Strength: ${strength}`;
+}
+
+// ============================================================
+// TASK 5: Bio Character Counter
+// ============================================================
+const bioTextarea = document.querySelector('#bio');
+const charCount = document.querySelector('#char-count');
+const submitBtn = document.querySelector('#submit-btn');
+
+if (bioTextarea) {
+  bioTextarea.addEventListener('input', () => {
+    const length = bioTextarea.value.length;
+    charCount.textContent = `${length} / 200 characters`;
+
+    if (length > 200) {
+      charCount.classList.add('over-limit');
+      submitBtn.disabled = true;
+    } else {
+      charCount.classList.remove('over-limit');
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+// ============================================================
+// TASK 2: Attach real-time listeners
+// ============================================================
+document.querySelector('#username').addEventListener('blur', validateUsername);
+document.querySelector('#email').addEventListener('blur', validateEmail);
+document.querySelector('#password').addEventListener('input', validatePassword);
+document.querySelector('#terms').addEventListener('change', validateTerms);
+
+// ============================================================
+// TASK 3: Submit Handler
+// ============================================================
+form.addEventListener('submit', function(event) {
+  event.preventDefault(); 
+
+  // Run all validators
+  const isUserValid = validateUsername();
+  const isEmailValid = validateEmail();
+  const isPassValid = validatePassword();
+  const isTermsValid = validateTerms();
+
+  if (isUserValid && isEmailValid && isPassValid && isTermsValid) {
+    // Hide form and show success
+    form.classList.add('hidden');
+    successMsg.classList.remove('hidden');
+    window.scrollTo(0, 0);
+  } else {
+    // Find the first invalid element and scroll to it
+    const firstInvalid = document.querySelector('.invalid');
+    if (firstInvalid) {
+      firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstInvalid.focus();
+    }
+  }
+});
