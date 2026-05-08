@@ -1,0 +1,185 @@
+/**
+ * Exercise 7: Local Storage — Notes App
+ * =======================================
+ * Build a full CRUD notes app using localStorage.
+ */
+
+// ============================================================
+// TASK 1 — Initialize: Load notes from localStorage
+// ============================================================
+
+const STORAGE_KEY = 'week9_notes';
+
+// Load existing notes or initialize empty array
+let notes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+let editingId = null; // null means we're in "add" mode
+
+function saveNotes() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+}
+
+// ============================================================
+// TASK 3 — Render Notes
+// ============================================================
+
+const notesContainer = document.querySelector('#notes-container');
+
+function renderNotes(filter = '') {
+  notesContainer.innerHTML = '';
+
+  // Filter notes by search term
+  let filtered = notes.filter(n => 
+    n.title.toLowerCase().includes(filter.toLowerCase()) || 
+    n.body.toLowerCase().includes(filter.toLowerCase())
+  );
+
+  // Sort: Pinned notes first, then by date (newest first)
+  filtered.sort((a, b) => {
+    if (a.pinned === b.pinned) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+    return a.pinned ? -1 : 1;
+  });
+
+  if (filtered.length === 0) {
+    notesContainer.innerHTML = `
+      <div class="empty-state">
+        <p>${filter ? `No results for "${filter}"` : 'No notes yet. Create your first one!'}</p>
+      </div>`;
+    return;
+  }
+
+  filtered.forEach(note => {
+    const noteCard = document.createElement('div');
+    noteCard.className = `note-card ${note.pinned ? 'pinned' : ''}`;
+    
+    // Body preview: truncate if > 100 chars
+    const bodyPreview = note.body.length > 100 
+      ? note.body.substring(0, 100) + '...' 
+      : note.body;
+
+    noteCard.innerHTML = `
+      <div class="note-content">
+        <h3>${note.pinned ? '📌 ' : ''}${note.title}</h3>
+        <p>${bodyPreview}</p>
+        <span class="note-date">${new Date(note.createdAt).toLocaleDateString()}</span>
+      </div>
+      <div class="note-actions">
+        <button data-id="${note.id}" data-action="pin" title="Pin Note">${note.pinned ? '📍' : '📌'}</button>
+        <button data-id="${note.id}" data-action="edit" title="Edit Note">✏️</button>
+        <button data-id="${note.id}" data-action="delete" title="Delete Note">🗑️</button>
+      </div>
+    `;
+    notesContainer.appendChild(noteCard);
+  });
+}
+
+// ============================================================
+// TASK 2 & 4 — Create and Update Notes
+// ============================================================
+
+const noteForm   = document.querySelector('#note-form');
+const titleInput = document.querySelector('#note-title');
+const bodyInput  = document.querySelector('#note-body');
+const submitBtn  = document.querySelector('#btn-submit');
+const cancelBtn  = document.querySelector('#btn-cancel');
+
+noteForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const title = titleInput.value.trim();
+  const body  = bodyInput.value.trim();
+
+  if (!title) { titleInput.focus(); return; }
+
+  if (editingId !== null) {
+    // ===== TASK 4: UPDATE existing note =====
+    notes = notes.map(n => n.id === editingId ? { 
+      ...n, 
+      title, 
+      body,
+      updatedAt: new Date().toISOString() 
+    } : n);
+    
+    resetForm();
+  } else {
+    // ===== TASK 2: CREATE new note =====
+    const newNote = {
+      id: Date.now(),
+      title,
+      body,
+      createdAt: new Date().toISOString(),
+      pinned: false
+    };
+    notes.push(newNote);
+  }
+
+  saveNotes();
+  renderNotes();
+  noteForm.reset();
+});
+
+function resetForm() {
+  editingId = null;
+  submitBtn.textContent = '💾 Save Note';
+  cancelBtn.classList.add('hidden');
+  document.querySelector('#form-title').textContent = 'New Note';
+  noteForm.reset();
+}
+
+cancelBtn.addEventListener('click', resetForm);
+
+// ============================================================
+// TASKS 4 & 5 — Edit, Pin, Delete via Event Delegation
+// ============================================================
+
+notesContainer.addEventListener('click', function(event) {
+  const btn = event.target.closest('button[data-action]');
+  if (!btn) return;
+
+  const id     = parseInt(btn.dataset.id);
+  const action = btn.dataset.action;
+
+  if (action === 'delete') {
+    if (confirm('Delete this note permanently?')) {
+      notes = notes.filter(n => n.id !== id);
+      saveNotes();
+      renderNotes();
+    }
+  }
+
+  if (action === 'pin') {
+    notes = notes.map(n => n.id === id ? { ...n, pinned: !n.pinned } : n);
+    saveNotes();
+    renderNotes();
+  }
+
+  if (action === 'edit') {
+    const noteToEdit = notes.find(n => n.id === id);
+    if (noteToEdit) {
+      editingId = id;
+      titleInput.value = noteToEdit.title;
+      bodyInput.value = noteToEdit.body;
+      
+      // UI Updates
+      submitBtn.textContent = '🔄 Update Note';
+      cancelBtn.classList.remove('hidden');
+      document.querySelector('#form-title').textContent = 'Editing Note';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+});
+
+// ============================================================
+// TASK 6 — Search Filter
+// ============================================================
+
+const searchInput = document.querySelector('#search-input');
+searchInput.addEventListener('input', () => {
+  renderNotes(searchInput.value);
+});
+
+// ============================================================
+// Initialize
+// ============================================================
+renderNotes();
