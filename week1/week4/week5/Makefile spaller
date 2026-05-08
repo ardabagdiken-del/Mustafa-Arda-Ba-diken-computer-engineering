@@ -1,0 +1,24 @@
+# CS50 Week 5 — Master Makefile
+
+# Compiler and Flags
+CC = clang
+CFLAGS = -Wall -Wextra -Wshadow -std=c11
+
+# .PHONY tells make that these are commands, not actual filenames
+.PHONY: all inheritance speller clean
+
+# 'make all' will build both inheritance and speller
+all: inheritance speller
+
+# Calls 'make' inside the lab5/inheritance directory
+inheritance:
+	$(MAKE) -C lab5/inheritance inheritance
+
+# Calls 'make' inside the pset5/speller directory
+speller:
+	$(MAKE) -C pset5/speller speller
+
+# Cleans up compiled files in both subdirectories
+clean:
+	$(MAKE) -C lab5/inheritance clean
+	$(MAKE) -C pset5/speller clean
