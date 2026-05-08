@@ -1,0 +1,247 @@
+/* 
+  Exercise 6: Fetch & API Styles 
+  ==============================
+  Provides layout and feedback states for asynchronous data fetching,
+  including GitHub cards, quote formatting, and loading spinners.
+*/
+
+/* Reset & Base Styles */
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+body { 
+  font-family: 'Segoe UI', system-ui, sans-serif; 
+  background: #f0f2f5; 
+  color: #222; 
+  line-height: 1.6; 
+}
+
+/* Header Section */
+header { 
+  background: #1a3a5c; 
+  color: white; 
+  padding: 2rem; 
+  text-align: center; 
+}
+
+header p { 
+  opacity: 0.8; 
+  margin-top: 0.5rem; 
+}
+
+/* Main Layout */
+main { 
+  max-width: 860px; 
+  margin: 2rem auto; 
+  padding: 0 1rem; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 1.5rem; 
+}
+
+/* Card Component */
+.card { 
+  background: white; 
+  border-radius: 12px; 
+  padding: 2rem; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+}
+
+h2 { 
+  margin-bottom: 1rem; 
+  color: #1a3a5c; 
+}
+
+/* Interactive Elements */
+button { 
+  padding: 0.6rem 1.4rem; 
+  border: none; 
+  border-radius: 6px; 
+  cursor: pointer; 
+  font-size: 1rem; 
+  background: #1a3a5c; 
+  color: white; 
+  transition: background-color 0.15s, opacity 0.15s; 
+}
+
+button:hover { 
+  opacity: 0.85; 
+}
+
+/* Search UI */
+.search-row { 
+  display: flex; 
+  gap: 0.5rem; 
+  margin-bottom: 1rem; 
+}
+
+.search-row input { 
+  flex: 1; 
+  padding: 0.6rem 1rem; 
+  border: 2px solid #ddd; 
+  border-radius: 6px; 
+  font-size: 1rem; 
+}
+
+/* Task 1: Quote Styling */
+blockquote { 
+  font-size: 1.2rem; 
+  font-style: italic; 
+  border-left: 4px solid #e8a838; 
+  padding-left: 1rem; 
+  margin-bottom: 0.5rem; 
+}
+
+.quote-author { 
+  color: #666; 
+  font-weight: 600; 
+}
+
+/* Feedback States */
+.placeholder { 
+  color: #aaa; 
+  font-style: italic; 
+}
+
+.error-text { 
+  color: #e74c3c; 
+  padding: 0.75rem; 
+  background: #fef0ef; 
+  border-radius: 6px; 
+  border: 1px solid #fabebb;
+}
+
+/* Loading Spinner Animation */
+.spinner { 
+  width: 36px; 
+  height: 36px; 
+  border: 4px solid #eee; 
+  border-top-color: #1a3a5c; 
+  border-radius: 50%; 
+  animation: spin 0.8s linear infinite; 
+  margin: 1rem auto; 
+}
+
+@keyframes spin { 
+  to { transform: rotate(360deg); } 
+}
+
+/* Task 2: GitHub Profile Card */
+.github-card { 
+  display: flex; 
+  gap: 1.5rem; 
+  align-items: flex-start; 
+  padding: 1.5rem; 
+  background: #f8f9fa; 
+  border-radius: 8px; 
+  margin-top: 1rem; 
+  border: 1px solid #eee;
+}
+
+.github-card img { 
+  width: 80px; 
+  height: 80px; 
+  border-radius: 50%; 
+  border: 2px solid #ddd;
+}
+
+.github-info h3 { margin-bottom: 0.25rem; }
+.github-info p { color: #666; font-size: 0.9rem; margin: 0.25rem 0; }
+
+.github-stats { 
+  display: flex; 
+  gap: 1rem; 
+  margin-top: 0.75rem; 
+  font-size: 0.85rem; 
+}
+
+.github-stats span { 
+  background: #e8f0fe; 
+  padding: 0.2rem 0.8rem; 
+  border-radius: 99px; 
+  font-weight: 500;
+}
+
+/* Task 3: Feed & Pagination Cards */
+.post-card { 
+  border: 1px solid #e0e0e0; 
+  border-radius: 8px; 
+  padding: 1.25rem; 
+  margin-bottom: 0.75rem; 
+  cursor: pointer; 
+  transition: transform 0.2s, box-shadow 0.2s; 
+}
+
+.post-card:hover { 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.post-card h3 { 
+  font-size: 1.1rem; 
+  margin-bottom: 0.5rem; 
+  color: #1a3a5c; 
+  text-transform: capitalize; 
+}
+
+.post-card p { 
+  font-size: 0.9rem; 
+  color: #666; 
+}
+
+/* Comment Section (nested inside post cards) */
+.comments-list { 
+  margin-top: 0.75rem; 
+  border-top: 1px solid #eee; 
+  padding-top: 0.75rem; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.5rem; 
+}
+
+.comment { 
+  background: #f8f9fa; 
+  padding: 0.5rem 0.75rem; 
+  border-radius: 6px; 
+  font-size: 0.85rem; 
+}
+
+.comment strong { 
+  color: #1a3a5c; 
+}
+
+#btn-load-more { 
+  display: block; 
+  margin: 1rem auto; 
+}
+
+/* Task 5: Multi-API Grid (Parallel Fetches) */
+.multi-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+  gap: 1.25rem; 
+  margin-top: 1rem; 
+}
+
+.multi-card { 
+  background: #f8f9fa; 
+  border-radius: 8px; 
+  padding: 1.25rem; 
+  border: 1px solid #eee;
+}
+
+.multi-card h4 { 
+  margin-bottom: 0.5rem; 
+  color: #1a3a5c; 
+}
+
+/* Footer */
+footer { 
+  text-align: center; 
+  padding: 2.5rem; 
+  color: #888; 
+  font-size: 0.875rem; 
+}
